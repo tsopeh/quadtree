@@ -2,7 +2,6 @@ import p5 from 'p5'
 import { Point, Quadtree, Region } from './quadtree'
 
 const quadtreeCapacity = 2
-const pointsCount = 256
 const particleDiameter = 8
 const canvasSize = 600
 
@@ -16,15 +15,20 @@ const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(canvasSize, canvasSize)
     p.background(64)
+  }
 
-    for (let i = 0; i < pointsCount; i++) {
-      const aPoint = new Point(p.random(canvasSize), p.random(canvasSize))
-      qt.insert(aPoint)
+  p.mouseClicked = (e: PointerEvent) => {
+    const x = e.offsetX
+    const y = e.offsetY
+    qt.insert(new Point(x, y))
+    for (let i = 0; i < 3; i++) {
+      const randomNearPoint = new Point(x + p.random(-30, 30), y + p.random(-30, 30))
+      qt.insert(randomNearPoint)
     }
-    drawQuadtree(p, qt)
   }
 
   p.draw = () => {
+    drawQuadtree(p, qt)
   }
 }
 

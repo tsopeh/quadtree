@@ -48,6 +48,18 @@ export class Quadtree {
     })
   }
 
+  public getPoints (): Array<Point> {
+    const acc: Array<Point> = []
+    this._getPoints(acc)
+    return acc
+  }
+
+  public getRegions (): Array<Region> {
+    const acc: Array<Region> = []
+    this._getRegions(acc)
+    return acc
+  }
+
   public insert (point: Point) {
     if (!this.region.contains(point)) {
       return
@@ -102,6 +114,28 @@ export class Quadtree {
       subdivisions.sw.insert(shifted)
     }
     this.points = subdivisions
+  }
+
+  private _getPoints (acc: Array<Point>): void {
+    if (Array.isArray(this.points)) {
+      this.points.forEach((point) => acc.push(point))
+    } else {
+      this.points.ne._getPoints(acc)
+      this.points.nw._getPoints(acc)
+      this.points.se._getPoints(acc)
+      this.points.sw._getPoints(acc)
+    }
+  }
+
+  private _getRegions (acc: Array<Region>): void {
+    if (Array.isArray(this.points)) {
+      acc.push(this.region)
+    } else {
+      this.points.ne._getRegions(acc)
+      this.points.nw._getRegions(acc)
+      this.points.se._getRegions(acc)
+      this.points.sw._getRegions(acc)
+    }
   }
 
 }

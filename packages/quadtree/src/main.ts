@@ -15,7 +15,7 @@ const sketch = (p: p5) => {
 
   p.setup = () => {
     p.createCanvas(canvasSize, canvasSize)
-    p.background(32)
+    p.background(64)
 
     for (let i = 0; i < pointsCount; i++) {
       const aPoint = new Point(p.random(canvasSize), p.random(canvasSize))
@@ -35,7 +35,8 @@ const drawQuadtree = (p: p5, qt: Quadtree): void => {
     p.rect(region.x, region.y, region.w, region.h)
   })
   qt.getPoints().forEach(point => {
-    p.stroke(255, 211, 0)
+    p.noStroke()
+    p.fill(255, 211, 0)
     p.ellipse(point.x, point.y, particleDiameter, particleDiameter)
   })
 }

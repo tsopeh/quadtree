@@ -28,16 +28,15 @@ export class Region {
 }
 
 type Subdivisions = {
-  ne: Quadtree
-  nw: Quadtree
-  se: Quadtree
-  sw: Quadtree
+  readonly ne: Quadtree
+  readonly nw: Quadtree
+  readonly se: Quadtree
+  readonly sw: Quadtree
 }
 
 export class Quadtree {
 
-  private readonly points: Array<Point> = []
-  private subdivisions: null | Subdivisions = null
+  private points: Array<Point> | Subdivisions = []
 
   public constructor (
     private readonly region: Region,
@@ -53,22 +52,31 @@ export class Quadtree {
     if (!this.region.contains(point)) {
       return
     }
-    if (this.subdivisions == null && this.points.length < this.capacity) {
+    if (Array.isArray(this.points) && this.points.length < this.capacity) {
       this.points.push(point)
     } else {
-      if (this.subdivisions == null) {
+      if (Array.isArray(this.points)) {
         this.subdivide()
       }
-      this.insertIntoSubdivision(point)
+      if (Array.isArray(this.points)) {
+        throw new Error(`Quadtree was suposed to be subdivided at this point`)
+      }
+      this.points.ne.insert(point)
+      this.points.nw.insert(point)
+      this.points.se.insert(point)
+      this.points.sw.insert(point)
     }
   }
 
   private subdivide () {
+    if (!Array.isArray(this.points)) {
+      throw new Error(`Points were already divided.`)
+    }
     const { x, y, w, h } = this.region
     const newW = w / 2
     const newH = h / 2
     const capacity = this.capacity
-    this.subdivisions = {
+    const subdivisions: Subdivisions = {
       nw: new Quadtree(
         new Region(x + w / 2, y, newW, newH),
         capacity,
@@ -88,18 +96,12 @@ export class Quadtree {
     }
     while (this.points.length > 0) {
       const shifted = this.points.shift()!
-      this.insertIntoSubdivision(shifted)
+      subdivisions.ne.insert(shifted)
+      subdivisions.nw.insert(shifted)
+      subdivisions.se.insert(shifted)
+      subdivisions.sw.insert(shifted)
     }
-  }
-
-  private insertIntoSubdivision (point: Point): void {
-    if (this.subdivisions == null) {
-      throw new Error(`Subdivisions do not exist.`)
-    }
-    this.subdivisions.ne.insert(point)
-    this.subdivisions.nw.insert(point)
-    this.subdivisions.se.insert(point)
-    this.subdivisions.sw.insert(point)
+    this.points = subdivisions
   }
 
 }

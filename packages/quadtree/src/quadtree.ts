@@ -25,6 +25,14 @@ export class Region {
       && y <= this.y + this.h
   }
 
+  public intersects (region: Region): boolean {
+    const isNotIntersecting = region.x > this.x + this.w
+      || this.x + this.w < region.x
+      || region.y > this.y + this.h
+      || this.y + this.h < this.y
+    return !isNotIntersecting
+  }
+
 }
 
 type Subdivisions = {
@@ -48,15 +56,15 @@ export class Quadtree {
     })
   }
 
-  public getPoints (): Array<Point> {
+  public queryPoints (region?: Region): Array<Point> {
     const acc: Array<Point> = []
-    this._getPoints(acc)
+    this._queryPoints(region ?? this.region, acc)
     return acc
   }
 
-  public getRegions (): Array<Region> {
+  public queryRegions (): Array<Region> {
     const acc: Array<Region> = []
-    this._getRegions(acc)
+    this._queryRegions(acc)
     return acc
   }
 
@@ -116,25 +124,32 @@ export class Quadtree {
     this.points = subdivisions
   }
 
-  private _getPoints (acc: Array<Point>): void {
+  private _queryPoints (region: Region, acc: Array<Point>): void {
+    if (!this.region.intersects(region)) {
+      return
+    }
     if (Array.isArray(this.points)) {
-      this.points.forEach((point) => acc.push(point))
+      this.points.forEach((point) => {
+        if (region.contains(point)) {
+          acc.push(point)
+        }
+      })
     } else {
-      this.points.ne._getPoints(acc)
-      this.points.nw._getPoints(acc)
-      this.points.se._getPoints(acc)
-      this.points.sw._getPoints(acc)
+      this.points.ne._queryPoints(region, acc)
+      this.points.nw._queryPoints(region, acc)
+      this.points.se._queryPoints(region, acc)
+      this.points.sw._queryPoints(region, acc)
     }
   }
 
-  private _getRegions (acc: Array<Region>): void {
+  private _queryRegions (acc: Array<Region>): void {
     if (Array.isArray(this.points)) {
       acc.push(this.region)
     } else {
-      this.points.ne._getRegions(acc)
-      this.points.nw._getRegions(acc)
-      this.points.se._getRegions(acc)
-      this.points.sw._getRegions(acc)
+      this.points.ne._queryRegions(acc)
+      this.points.nw._queryRegions(acc)
+      this.points.se._queryRegions(acc)
+      this.points.sw._queryRegions(acc)
     }
   }
 

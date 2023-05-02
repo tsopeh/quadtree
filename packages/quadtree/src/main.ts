@@ -27,18 +27,29 @@ const sketch = (p: p5) => {
     }
   }
 
+  const highlightSize = 200
+  const highlightRegion = new Region(p.random(canvasSize - highlightSize), p.random(canvasSize - highlightSize), highlightSize, highlightSize)
+
   p.draw = () => {
     drawQuadtree(p, qt)
+    p.stroke(0, 255, 0)
+    p.noFill()
+    p.rect(highlightRegion.x, highlightRegion.y, highlightRegion.w, highlightRegion.h)
+    qt.queryPoints(highlightRegion).forEach(point => {
+      p.noStroke()
+      p.fill(255, 0, 0)
+      p.ellipse(point.x, point.y, particleDiameter, particleDiameter)
+    })
   }
 }
 
 const drawQuadtree = (p: p5, qt: Quadtree): void => {
-  qt.getRegions().forEach((region) => {
+  qt.queryRegions().forEach((region) => {
     p.stroke(255)
     p.noFill()
     p.rect(region.x, region.y, region.w, region.h)
   })
-  qt.getPoints().forEach(point => {
+  qt.queryPoints().forEach(point => {
     p.noStroke()
     p.fill(255, 211, 0)
     p.ellipse(point.x, point.y, particleDiameter, particleDiameter)

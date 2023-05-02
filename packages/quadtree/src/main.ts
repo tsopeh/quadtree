@@ -10,11 +10,11 @@ const sketch = (p: p5) => {
   const qt = new Quadtree(
     new Region(0, 0, canvasSize, canvasSize),
     quadtreeCapacity,
+    Array.from({ length: 50 }).map(() => new Point(p.random(canvasSize), p.random(canvasSize))),
   )
 
   p.setup = () => {
     p.createCanvas(canvasSize, canvasSize)
-    p.background(64)
   }
 
   p.mouseClicked = (e: PointerEvent) => {
@@ -28,19 +28,20 @@ const sketch = (p: p5) => {
   }
 
   const highlightSize = 200
-  const highlightRegion = new Region(p.random(canvasSize - highlightSize), p.random(canvasSize - highlightSize), highlightSize, highlightSize)
+  let highlightRegion: Region | null = null
+
+  p.mouseMoved = (({ offsetX, offsetY }: PointerEvent) => {
+    highlightRegion = new Region(offsetX - highlightSize / 2, offsetY - highlightSize / 2, highlightSize, highlightSize)
+  })
 
   p.draw = () => {
+    p.background(64)
     drawQuadtree(p, qt)
-    p.stroke(0, 255, 0)
-    p.noFill()
-    p.rect(highlightRegion.x, highlightRegion.y, highlightRegion.w, highlightRegion.h)
-    qt.queryPoints(highlightRegion).forEach(point => {
-      p.noStroke()
-      p.fill(255, 0, 0)
-      p.ellipse(point.x, point.y, particleDiameter, particleDiameter)
-    })
+    if (highlightRegion != null) {
+      drawHighlight(p, highlightRegion, qt)
+    }
   }
+
 }
 
 const drawQuadtree = (p: p5, qt: Quadtree): void => {
@@ -52,6 +53,17 @@ const drawQuadtree = (p: p5, qt: Quadtree): void => {
   qt.queryPoints().forEach(point => {
     p.noStroke()
     p.fill(255, 211, 0)
+    p.ellipse(point.x, point.y, particleDiameter, particleDiameter)
+  })
+}
+
+const drawHighlight = (p: p5, region: Region, qt: Quadtree): void => {
+  p.stroke(0, 255, 0)
+  p.noFill()
+  p.rect(region.x, region.y, region.w, region.h)
+  qt.queryPoints(region).forEach(point => {
+    p.noStroke()
+    p.fill(255, 0, 0)
     p.ellipse(point.x, point.y, particleDiameter, particleDiameter)
   })
 }

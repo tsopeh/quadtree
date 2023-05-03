@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import { Point, Quadtree, Region } from './quadtree'
+import { Point, Quadtree, Region } from './quadtree.ts'
 
 interface QuadtreeDemoParams {
   capacityThreshold: number

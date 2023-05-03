@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import { Point } from './quadtree'
+import { Point } from './quadtree.ts'
 
 interface ParticleCollisionsDemoParams {
   canvasSizePx: number

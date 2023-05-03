@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+canvas {
+  &:nth-of-type(1) {
+    margin: 1rem;
+  }
+
+  &:nth-of-type(2) {
+    margin: 1rem 1rem 1rem 0rem;
+  }
+}

@@ -64,11 +64,14 @@ export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
     let highlightRegion: Region | null = null
 
     p.mouseMoved = (({ offsetX, offsetY }: PointerEvent) => {
-      highlightRegion = {
-        x: offsetX - highlightSize / 2,
-        y: offsetY - highlightSize / 2,
-        w: highlightSize,
-        h: highlightSize,
+      const isInsideCanvas = p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height
+      if (isInsideCanvas) {
+        highlightRegion = {
+          x: offsetX - highlightSize / 2,
+          y: offsetY - highlightSize / 2,
+          w: highlightSize,
+          h: highlightSize,
+        }
       }
       return false
     })

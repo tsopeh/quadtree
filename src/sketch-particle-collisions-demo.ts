@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import { Point } from './quadtree.ts'
+import { Point, Quadtree, Region } from './quadtree.ts'
 
 interface ParticleCollisionsDemoParams {
   canvasSizePx: number
@@ -10,6 +10,40 @@ interface ParticleCollisionsDemoParams {
 
 interface Particle extends Point {
   radius: number
+}
+
+const drawNaiveCollisions = (p: p5, particles: Array<Particle>) => {
+  particles.forEach((particle) => {
+    const { x, y, radius } = particle
+    const isColliding = particles.some(otherParticle => {
+      return otherParticle != particle
+        && (p.dist(x, y, otherParticle.x, otherParticle.y) < radius + otherParticle.radius)
+    })
+    p.noStroke()
+    if (isColliding) {
+      p.fill(255, 211, 0)
+    } else {
+      p.fill(255)
+    }
+    p.circle(x, y, 2 * radius)
+  })
+}
+
+const drawQuadtreeCollisions = (p: p5, particles: Array<Particle>, rootRegion: Region) => {
+
+  const quadTree = new Quadtree(rootRegion, 1, particles)
+
+  particles.forEach((particle) => {
+    const { x, y, radius } = particle
+    const isColliding = quadTree.queryPoints({ x: x - radius, y: y - radius, w: radius * 2, h: radius * 2 }).length > 1
+    p.noStroke()
+    if (isColliding) {
+      p.fill(255, 211, 0)
+    } else {
+      p.fill(255)
+    }
+    p.circle(x, y, 2 * radius)
+  })
 }
 
 export const sketchParticleCollisionsDemo = (params: ParticleCollisionsDemoParams) => {
@@ -39,20 +73,8 @@ export const sketchParticleCollisionsDemo = (params: ParticleCollisionsDemoParam
         particle.y += p.random(-1, 1)
       })
 
-      particles.forEach((particle) => {
-        const isColliding = particles.some(otherParticle => {
-          return otherParticle != particle
-            && (p.dist(particle.x, particle.y, otherParticle.x, otherParticle.y) < particle.radius + otherParticle.radius)
-        })
-        const { x, y, radius } = particle
-        p.noStroke()
-        if (isColliding) {
-          p.fill(255, 211, 0)
-        } else {
-          p.fill(255)
-        }
-        p.circle(x, y, 2 * radius)
-      })
+      // drawNaiveCollisions(p, particles)
+      drawQuadtreeCollisions(p, particles, { x: 0, y: 0, w: canvasSizePx, h: canvasSizePx })
     }
 
   }

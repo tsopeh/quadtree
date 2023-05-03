@@ -21,6 +21,8 @@ new p5(
     particlesCount: 2000,
     solitaryRadius: 3,
     collisionRadius: 6,
+    // method: 'naive',
+    method: 'quadtree',
   }),
   mainEl,
 )

@@ -25,29 +25,29 @@ const regionIntersects = (a: Region, b: Region): boolean => {
   return !isNotIntersecting
 }
 
-type Subdivisions = {
-  readonly ne: Quadtree
-  readonly nw: Quadtree
-  readonly se: Quadtree
-  readonly sw: Quadtree
+type Subdivisions<T extends Point> = {
+  readonly ne: Quadtree<T>
+  readonly nw: Quadtree<T>
+  readonly se: Quadtree<T>
+  readonly sw: Quadtree<T>
 }
 
-export class Quadtree {
+export class Quadtree<T extends Point> {
 
-  private points: Array<Point> | Subdivisions = []
+  private points: Array<T> | Subdivisions<T> = []
 
   public constructor (
     private readonly region: Region,
     private readonly capacity: number,
-    points?: ReadonlyArray<Point>,
+    points?: ReadonlyArray<T>,
   ) {
     points?.forEach((point) => {
       this.insert(point)
     })
   }
 
-  public queryPoints (region?: Region): Array<Point> {
-    const acc: Array<Point> = []
+  public queryPoints (region?: Region): Array<T> {
+    const acc: Array<T> = []
     this._queryPoints(region ?? this.region, acc)
     return acc
   }
@@ -58,7 +58,7 @@ export class Quadtree {
     return acc
   }
 
-  public insert (point: Point) {
+  public insert (point: T) {
     if (!regionContains(this.region, point)) {
       return
     }
@@ -69,7 +69,7 @@ export class Quadtree {
         this.subdivide()
       }
       if (Array.isArray(this.points)) {
-        throw new Error(`Quadtree was suposed to be subdivided at this point`)
+        throw new Error(`Quadtree was supposed to be subdivided at this point`)
       }
       this.points.ne.insert(point)
       this.points.nw.insert(point)
@@ -86,7 +86,7 @@ export class Quadtree {
     const newW = w / 2
     const newH = h / 2
     const capacity = this.capacity
-    const subdivisions: Subdivisions = {
+    const subdivisions: Subdivisions<T> = {
       nw: new Quadtree(
         { x: x + w / 2, y, w: newW, h: newH },
         capacity,

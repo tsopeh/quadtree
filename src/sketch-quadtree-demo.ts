@@ -65,7 +65,7 @@ export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
       }
     }
 
-    const highlightSize = 200
+    const highlightSize = 100
     let highlightRegion: Region | null = null
 
     p.mouseMoved = (({ offsetX, offsetY }: PointerEvent) => {

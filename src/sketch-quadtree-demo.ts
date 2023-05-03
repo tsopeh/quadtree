@@ -8,7 +8,7 @@ interface QuadtreeDemoParams {
   randomPointsCount: number
 }
 
-const drawQuadtree = (p: p5, qt: Quadtree, pointRadius: number): void => {
+const drawQuadtree = <T extends Point> (p: p5, qt: Quadtree<T>, pointRadius: number): void => {
   qt.queryLeafRegions().forEach((region) => {
     p.stroke(255)
     p.noFill()
@@ -21,7 +21,7 @@ const drawQuadtree = (p: p5, qt: Quadtree, pointRadius: number): void => {
   })
 }
 
-const drawHighlight = (p: p5, region: Region, qt: Quadtree, pointRadius: number): void => {
+const drawHighlight = <T extends Point> (p: p5, region: Region, qt: Quadtree<T>, pointRadius: number): void => {
   p.stroke(0, 255, 0)
   p.noFill()
   p.rect(region.x, region.y, region.w, region.h)

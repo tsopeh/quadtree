@@ -1,38 +1,28 @@
-export class Point {
-
-  public constructor (
-    public readonly x: number,
-    public readonly y: number,
-  ) {
-  }
-
+export interface Point {
+  x: number
+  y: number
 }
 
-export class Region {
+export interface Region {
+  x: number
+  y: number
+  w: number
+  h: number
+}
 
-  public constructor (
-    public readonly x: number,
-    public readonly y: number,
-    public readonly w: number,
-    public readonly h: number,
-  ) {
-  }
+const regionContains = (region: Region, point: Point): boolean => {
+  return point.x > region.x
+    && point.x <= region.x + region.w
+    && point.y > region.y
+    && point.y <= region.y + region.h
+}
 
-  public contains ({ x, y }: Point): boolean {
-    return x > this.x
-      && x <= this.x + this.w
-      && y > this.y
-      && y <= this.y + this.h
-  }
-
-  public intersects (region: Region): boolean {
-    const isNotIntersecting = region.x > this.x + this.w
-      || region.x + region.w < this.x
-      || region.y > this.y + this.h
-      || region.y + region.h < this.y
-    return !isNotIntersecting
-  }
-
+const regionIntersects = (a: Region, b: Region): boolean => {
+  const isNotIntersecting = b.x > a.x + a.w
+    || b.x + b.w < a.x
+    || b.y > a.y + a.h
+    || b.y + b.h < a.y
+  return !isNotIntersecting
 }
 
 type Subdivisions = {
@@ -62,14 +52,14 @@ export class Quadtree {
     return acc
   }
 
-  public queryRegions (): Array<Region> {
+  public queryLeafRegions (): Array<Region> {
     const acc: Array<Region> = []
     this._queryRegions(acc)
     return acc
   }
 
   public insert (point: Point) {
-    if (!this.region.contains(point)) {
+    if (!regionContains(this.region, point)) {
       return
     }
     if (Array.isArray(this.points) && this.points.length < this.capacity) {
@@ -98,19 +88,19 @@ export class Quadtree {
     const capacity = this.capacity
     const subdivisions: Subdivisions = {
       nw: new Quadtree(
-        new Region(x + w / 2, y, newW, newH),
+        { x: x + w / 2, y, w: newW, h: newH },
         capacity,
       ),
       ne: new Quadtree(
-        new Region(x, y, newW, newH),
+        { x, y, w: newW, h: newH },
         capacity,
       ),
       se: new Quadtree(
-        new Region(x + w / 2, y + h / 2, newW, newH),
+        { x: x + w / 2, y: y + h / 2, w: newW, h: newH },
         capacity,
       ),
       sw: new Quadtree(
-        new Region(x, y + h / 2, newW, newH),
+        { x, y: y + h / 2, w: newW, h: newH },
         capacity,
       ),
     }
@@ -125,12 +115,12 @@ export class Quadtree {
   }
 
   private _queryPoints (region: Region, acc: Array<Point>): void {
-    if (!this.region.intersects(region)) {
+    if (!regionIntersects(this.region, region)) {
       return
     }
     if (Array.isArray(this.points)) {
       this.points.forEach((point) => {
-        if (region.contains(point)) {
+        if (regionContains(region, point)) {
           acc.push(point)
         }
       })

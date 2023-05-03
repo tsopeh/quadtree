@@ -39,9 +39,18 @@ export const sketchParticleCollisionsDemo = (params: ParticleCollisionsDemoParam
         particle.y += p.random(-1, 1)
       })
 
-      particles.forEach(({ x, y, radius }) => {
+      particles.forEach((particle) => {
+        const isColliding = particles.some(otherParticle => {
+          return otherParticle != particle
+            && (p.dist(particle.x, particle.y, otherParticle.x, otherParticle.y) < particle.radius + otherParticle.radius)
+        })
+        const { x, y, radius } = particle
         p.noStroke()
-        p.fill(255)
+        if (isColliding) {
+          p.fill(255, 211, 0)
+        } else {
+          p.fill(255)
+        }
         p.circle(x, y, 2 * radius)
       })
     }

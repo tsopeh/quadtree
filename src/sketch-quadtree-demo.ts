@@ -4,11 +4,11 @@ import { Point, Quadtree, Region } from './quadtree.ts'
 interface QuadtreeDemoParams {
   capacityThreshold: number
   canvasSizePx: number
-  pointDiameterPx: number
+  pointRadiusPx: number
   randomPointsCount: number
 }
 
-const drawQuadtree = (p: p5, qt: Quadtree, pointDiameter: number): void => {
+const drawQuadtree = (p: p5, qt: Quadtree, pointRadius: number): void => {
   qt.queryLeafRegions().forEach((region) => {
     p.stroke(255)
     p.noFill()
@@ -17,18 +17,18 @@ const drawQuadtree = (p: p5, qt: Quadtree, pointDiameter: number): void => {
   qt.queryPoints().forEach(point => {
     p.noStroke()
     p.fill(255, 211, 0)
-    p.ellipse(point.x, point.y, pointDiameter, pointDiameter)
+    p.ellipse(point.x, point.y, 2 * pointRadius, 2 * pointRadius)
   })
 }
 
-const drawHighlight = (p: p5, region: Region, qt: Quadtree, pointDiameter: number): void => {
+const drawHighlight = (p: p5, region: Region, qt: Quadtree, pointRadius: number): void => {
   p.stroke(0, 255, 0)
   p.noFill()
   p.rect(region.x, region.y, region.w, region.h)
   qt.queryPoints(region).forEach(point => {
     p.noStroke()
     p.fill(255, 0, 0)
-    p.ellipse(point.x, point.y, pointDiameter, pointDiameter)
+    p.ellipse(point.x, point.y, 2 * pointRadius, 2 * pointRadius)
   })
 }
 
@@ -37,7 +37,7 @@ const isInsideCanvas = (p: p5) => p.mouseX > 0 && p.mouseX < p.width && p.mouseY
 export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
 
   return (p: p5) => {
-    const { canvasSizePx, capacityThreshold, randomPointsCount, pointDiameterPx } = params
+    const { canvasSizePx, capacityThreshold, randomPointsCount, pointRadiusPx } = params
 
     const qt = new Quadtree(
       { x: 0, y: 0, w: canvasSizePx, h: canvasSizePx },
@@ -90,9 +90,9 @@ export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
 
     p.draw = () => {
       p.background(64)
-      drawQuadtree(p, qt, pointDiameterPx)
+      drawQuadtree(p, qt, pointRadiusPx)
       if (highlightRegion != null) {
-        drawHighlight(p, highlightRegion, qt, pointDiameterPx)
+        drawHighlight(p, highlightRegion, qt, pointRadiusPx)
       }
     }
   }

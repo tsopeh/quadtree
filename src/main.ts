@@ -9,7 +9,7 @@ new p5(
   sketchQuadtreeDemo({
     canvasSizePx: 400,
     capacityThreshold: 1,
-    pointDiameterPx: 8,
+    pointRadiusPx: 3,
     randomPointsCount: 500,
   }),
   mainEl,
@@ -19,7 +19,7 @@ new p5(
   sketchParticleCollisionsDemo({
     canvasSizePx: 400,
     particlesCount: 2000,
-    solitaryRadius: 4,
+    solitaryRadius: 3,
     collisionRadius: 6,
   }),
   mainEl,

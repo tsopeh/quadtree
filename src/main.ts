@@ -7,20 +7,20 @@ document.body.appendChild(mainEl)
 
 new p5(
   sketchQuadtreeDemo({
-    canvasSizePx: 600,
+    canvasSizePx: 400,
     capacityThreshold: 1,
     pointDiameterPx: 8,
-    randomPointsCount: 1000,
+    randomPointsCount: 500,
   }),
   mainEl,
 )
 
 new p5(
   sketchParticleCollisionsDemo({
-    canvasSizePx: 600,
-    particlesCount: 1000,
-    solitaryRadius: 5,
-    collisionRadius: 10,
+    canvasSizePx: 400,
+    particlesCount: 2000,
+    solitaryRadius: 4,
+    collisionRadius: 6,
   }),
   mainEl,
 )

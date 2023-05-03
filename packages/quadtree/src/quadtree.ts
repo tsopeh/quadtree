@@ -27,9 +27,9 @@ export class Region {
 
   public intersects (region: Region): boolean {
     const isNotIntersecting = region.x > this.x + this.w
-      || this.x + this.w < region.x
+      || region.x + region.w < this.x
       || region.y > this.y + this.h
-      || this.y + this.h < this.y
+      || region.y + region.h < this.y
     return !isNotIntersecting
   }
 

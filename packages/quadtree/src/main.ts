@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import { Point, Quadtree, Region } from './quadtree'
 
-const quadtreeCapacity = 2
+const quadtreeCapacity = 1
 const particleDiameter = 8
 const canvasSize = 600
 
@@ -10,7 +10,7 @@ const sketch = (p: p5) => {
   const qt = new Quadtree(
     new Region(0, 0, canvasSize, canvasSize),
     quadtreeCapacity,
-    Array.from({ length: 50 }).map(() => new Point(p.random(canvasSize), p.random(canvasSize))),
+    Array.from({ length: 1000 }).map(() => new Point(p.random(canvasSize), p.random(canvasSize))),
   )
 
   p.setup = () => {
@@ -21,7 +21,7 @@ const sketch = (p: p5) => {
     const x = e.offsetX
     const y = e.offsetY
     qt.insert(new Point(x, y))
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 10; i++) {
       const randomNearPoint = new Point(x + p.random(-30, 30), y + p.random(-30, 30))
       qt.insert(randomNearPoint)
     }

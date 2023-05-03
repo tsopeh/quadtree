@@ -32,6 +32,8 @@ const drawHighlight = (p: p5, region: Region, qt: Quadtree, pointDiameter: numbe
   })
 }
 
+const isInsideCanvas = (p: p5) => p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height
+
 export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
 
   return (p: p5) => {
@@ -51,6 +53,9 @@ export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
     }
 
     p.mouseClicked = (e: PointerEvent) => {
+      if (!isInsideCanvas(p)) {
+        return false
+      }
       const x = e.offsetX
       const y = e.offsetY
       qt.insert({ x, y })
@@ -64,14 +69,21 @@ export const sketchQuadtreeDemo = (params: QuadtreeDemoParams) => {
     let highlightRegion: Region | null = null
 
     p.mouseMoved = (({ offsetX, offsetY }: PointerEvent) => {
-      const isInsideCanvas = p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height
-      if (isInsideCanvas) {
+      if (!isInsideCanvas(p)) {
+        return false
+      }
+      const newX = offsetX - highlightSize / 2
+      const newY = offsetY - highlightSize / 2
+      if (highlightRegion == null) {
         highlightRegion = {
-          x: offsetX - highlightSize / 2,
-          y: offsetY - highlightSize / 2,
+          x: newX,
+          y: newY,
           w: highlightSize,
           h: highlightSize,
         }
+      } else {
+        highlightRegion.x = newX
+        highlightRegion.y = newY
       }
       return false
     })

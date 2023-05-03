@@ -14,7 +14,7 @@ interface Particle extends Point {
 
 export const sketchParticleCollisionsDemo = (params: ParticleCollisionsDemoParams) => {
 
-  const { canvasSizePx, particlesCount, solitaryRadius, collisionRadius } = params
+  const { canvasSizePx, particlesCount, solitaryRadius } = params
 
   return (p: p5) => {
 

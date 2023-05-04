@@ -26,3 +26,12 @@ new p5(
   }),
   mainEl,
 )
+
+// Performance monitor
+;(function () {
+  var s = document.createElement('script')
+  s.onload = function () {
+    //@ts-ignore
+    new permon.Permon()
+  }, s.src = '//tsopeh.github.io/permon/dist/permon.iife.js', document.head.appendChild(s)
+})()

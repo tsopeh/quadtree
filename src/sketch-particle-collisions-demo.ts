@@ -66,15 +66,24 @@ export const sketchParticleCollisionsDemo = (params: ParticleCollisionsDemoParam
         const neighbors = method == 'quadtree'
           ? getNeighbors_Quadtree(particle, quadtree!)
           : getNeighbors_Naive(particle, particles)
-        const isColliding = neighbors.some(otherParticle => {
+        const collisionCount = neighbors.filter(otherParticle => {
           return particle != otherParticle
             && (p.dist(x, y, otherParticle.x, otherParticle.y) < radius + otherParticle.radius)
-        })
+        }).length
         p.noStroke()
-        if (isColliding) {
-          p.fill(255, 211, 0)
-        } else {
-          p.fill(255)
+        switch (collisionCount) {
+          case 0:
+            p.fill(255)
+            break
+          case 1:
+            p.fill(255, 211, 0)
+            break
+          case 2:
+            p.fill(253, 146, 87)
+            break
+          default:
+            p.fill(255, 0, 0)
+            break
         }
         p.circle(x, y, 2 * radius)
       })
